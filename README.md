@@ -1,6 +1,13 @@
 # Flow Analysis
 
-Optical Flow 
+## Etapas
+
+* Cálculo de Perspectiva (Ajuste de câmera)
+* Optical Flow e cálculo dos vetores
+* Agrupamento e Fluxo
+* Cálculo de vetor por grupo 
+
+## Optical Flow 
 
 * https://docs.opencv.org/3.3.1/d7/d8b/tutorial_py_lucas_kanade.html
 * https://vision.in.tum.de/research/optical_flow_estimation
