@@ -22,4 +22,6 @@
 
 * http://www.cse.psu.edu/~rtc12/CSE486/lecture30.pdf
 * https://pdfs.semanticscholar.org/6841/d3368d4dfb52548cd0ed5fef29199d14c014.pdf
- *https://sandipanweb.wordpress.com/2018/02/25/implementing-lucas-kanade-optical-flow-algorithm-in-python/
+* https://sandipanweb.wordpress.com/2018/02/25/implementing-lucas-kanade-optical-flow-algorithm-in-python/
+* https://www.youtube.com/watch?v=1r8E9uAcn4E
+* https://www.youtube.com/watch?v=TcnVeK6YjUc
