@@ -7,6 +7,20 @@ import math
 from scipy.signal import convolve2d
 import random
 import sys
+from sklearn.externals import joblib
+from sklearn.cluster import KMeans
+
+def save_logflow(log, file="log_flow.csv"):
+  '''
+  Save log file
+  '''
+  log_str = [", ".join(str(l) for l in line) for line in log]
+
+  with open(file, 'w') as f:
+    f.write("frame,i,x1,y1,x2,y2,x,y,angle,size\n")
+    for line in log_str:
+      f.write(line+"\n")
+
 
 def Lucas_Kanade(I1, I2, features, k = 1):
     Gx  = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
@@ -78,8 +92,19 @@ def Lucas_Kanade(I1, I2, features, k = 1):
 
     return newFeature, status
 
-def rad2rgb(rad):
-    rgb = floatRgb(rad, -math.pi, math.pi)
+
+kmeans = joblib.load('kmeans.pkl') 
+def predict_cluster(val):
+  return kmeans.predict(val)
+
+def rad2rgb(rad, cluster = False):
+    
+    if cluster:
+      c   = predict_cluster(rad)
+      rgb = floatRgb(c, 0, 1)
+    else:
+      rgb = floatRgb(rad, -math.pi, math.pi)
+
     return rgb
 
 def floatRgb(mag, cmin, cmax):
@@ -96,4 +121,4 @@ def floatRgb(mag, cmin, cmax):
        blue = min((max((4*(0.75-x), 0.)), 1.))*255
        red  = min((max((4*(x-0.25), 0.)), 1.))*255
        green= min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))*255
-       return [red, green, blue]
+       return [int(red), int(green), int(blue)]

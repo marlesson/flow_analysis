@@ -45,8 +45,8 @@ if __name__ == '__main__':
   p0             = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
   
   # Create a mask image for drawing purposes
-  mask = np.zeros_like(old_frame)    
-  i    = 1
+  mask    = np.zeros_like(old_frame)    
+  i_frame = 1
 
   # Log pixels flow
   log_flow = []
@@ -59,7 +59,7 @@ if __name__ == '__main__':
           break
 
       # Resent FeaturesTrack
-      if i % 2 == 0:
+      if i_frame % 2 == 0:
           p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
 
       # Frame in Grayscale
@@ -79,18 +79,19 @@ if __name__ == '__main__':
 
           x     = a-c
           y     = b-d
-          angle = math.atan2(x, y)
+          angle = math.atan2(y, x)
           size  = math.sqrt(x**2+y**2)
           
-          log_flow.append([a, b, c, d, x, y, angle, size])
+          log_flow.append([i_frame, i, int(a), int(b), int(c), 
+                            int(d), int(x), int(y), angle, size])
           #print((c,d), " -> ", (a,b), " ", (x, y), " ", angle, " ", size)
           # continue if diff between pixels positions is less 1
           t = 1
           if np.fabs(x) <= t and np.fabs(y) <= t:
               continue
           
-          mask  = cv2.line(mask, (a,b), (c,d), rad2rgb(angle), 2)
-          frame = cv2.circle(frame,(a,b), 3, rad2rgb(angle), -1)
+          mask  = cv2.line(mask, (a,b), (c,d), rad2rgb(angle, cluster=True), 2)
+          frame = cv2.circle(frame,(a,b), 3, rad2rgb(angle, cluster=True), -1)
 
       img = cv2.add(frame, mask)
       
@@ -107,7 +108,10 @@ if __name__ == '__main__':
       # Now update the previous frame and previous points
       old_gray = frame_gray.copy()
       p0       = good_new.reshape(-1, 1, 2)
-      i = i+1
+      i_frame  = i_frame+1
+
+  #Save Log flow
+  save_logflow(log_flow)
 
   out.release()
   cap.release()

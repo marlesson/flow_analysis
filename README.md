@@ -7,6 +7,12 @@
 * Agrupamento e Fluxo
 * Cálculo de vetor por grupo 
 
+# Uso
+
+```
+python parse_lk.py -f data/sample.flv -s 10 -c 300
+```
+
 ## Optical Flow 
 
 * https://docs.opencv.org/3.3.1/d7/d8b/tutorial_py_lucas_kanade.html
