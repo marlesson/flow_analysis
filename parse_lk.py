@@ -7,8 +7,13 @@ import cv2 as cv
 import math
 import random
 import sys
+import matplotlib.pyplot as plt
 from util import *
 
+perspective_samples = {
+    "original": [[497, 597], [545, 578], [533, 254], [566, 255]], 
+    "flat": [[500, 600], [540, 600], [500, 255], [540, 255]]
+}
 
 if __name__ == '__main__':
 
@@ -36,7 +41,9 @@ if __name__ == '__main__':
   # Take first frame and find corners in it
   ret, old_frame = cap.read()
   old_gray       = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
-
+  #old_gray       = transform_image(old_gray, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+  #plt.imshow(old_gray, cmap="gray")
+  #plt.show()
   # parameter to get features track
   feature_params = dict(maxCorners=args.maxCorners,
                         qualityLevel=0.3,
@@ -64,6 +71,8 @@ if __name__ == '__main__':
 
       # Frame in Grayscale
       frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+      #frame_gray = transform_image(frame_gray, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+    
 
       # Optical Flow
       p1, st = Lucas_Kanade(old_gray, frame_gray, p0, args.sizeWinlk)

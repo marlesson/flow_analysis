@@ -122,3 +122,29 @@ def floatRgb(mag, cmin, cmax):
        red  = min((max((4*(x-0.25), 0.)), 1.))*255
        green= min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))*255
        return [int(red), int(green), int(blue)]
+"""
+def calculate_perspective_transformation(samples):
+    x11 == (h00*x11h + h01*y11h + h02)/(h20*x11h + h21*y11h + h22), 
+   y11 == (h10*x11h + h11*y11h + h12)/(h20*x11h + h21*y11h + h22),
+   x12 == (h00*x12h + h01*y12h + h02)/(h20*x12h + h21*y12h + h22), 
+   y12 == (h10*x12h + h11*y12h + h12)/(h20*x12h + h21*y12h + h22),
+   x21 == (h00*x21h + h01*y21h + h02)/(h20*x21h + h21*y21h + h22),
+   y21 == (h10*x21h + h11*y21h + h12)/(h20*x21h + h21*y21h + h22),
+   x22 == (h00*x22h + h01*y22h + h02)/(h20*x22h + h21*y22h + h22), 
+   y22 == (h10*x22h + h11*y22h + h12)/(h20*x22h + h21*y22h + h22)
+"""
+
+def transform_image(img, transformation):
+    print(type(img))
+    new_img = np.zeros(img.shape)
+    for i, line in enumerate(img):
+      for j, pixel in enumerate(line):
+        p = [i, j, 1]
+        p_ = np.dot(transformation,p)
+        p_ = p_/p_[2]
+        if p_[0] < len(img) and p_[1] < len(line):
+          new_img[int(p_[0])][int(p_[1])] = pixel
+    print(np.setdiff1d(img.reshape((1,921600)), new_img.reshape((1,921600))))
+    return new_img
+    
+
