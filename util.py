@@ -124,11 +124,11 @@ def floatRgb(mag, cmin, cmax):
        green= min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))*255
        return [int(red), int(green), int(blue)]
 
-def calculate_perspective_transformation(samples, resize_ratio = 1, translate = [0,0]):
+def calculate_perspective_transformation(source, target, resize_ratio = 1, translate = [0,0]):
   x = 1
   y = 0
-  p  = samples["original"]
-  p_ = samples["flat"]
+  p  = source
+  p_ = target
   A  = [
     [ 0,         0,         0,    -p[0][x],   -p[0][y],   -1,     p_[0][y]*p[0][x],     p_[0][y]*p[0][y] ],
     [ p[0][x],   p[0][y],   1,     0,          0,          0,    -p_[0][x]*p[0][x],    -p_[0][x]*p[0][y] ],

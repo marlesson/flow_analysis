@@ -15,7 +15,8 @@ perspective_samples = {
     "flat": np.array([[500, 580], [530, 580], [500, 300], [530, 300]])
 }
 
-remove_perspective_matrix = calculate_perspective_transformation(perspective_samples, 0.7, [200,100])
+remove_perspective_matrix = calculate_perspective_transformation(perspective_samples['flat'], 
+    perspective_samples['original'], 0.7, [200,100])
 
 if __name__ == '__main__':
 
