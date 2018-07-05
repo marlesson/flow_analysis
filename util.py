@@ -9,6 +9,7 @@ import random
 import sys
 from sklearn.externals import joblib
 from sklearn.cluster import KMeans
+from scipy.ndimage import gaussian_filter
 
 def save_logflow(log, file="log_flow.csv"):
   '''
@@ -23,6 +24,12 @@ def save_logflow(log, file="log_flow.csv"):
 
 
 def Lucas_Kanade(I1, I2, features, k = 1):
+    # Gaussian Filter
+    #sigma = 5
+    #I1 = gaussian_filter(I1, sigma=sigma)
+    #I2 = gaussian_filter(I2, sigma=sigma)
+
+
     Gx  = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
     Gy  = np.reshape(np.asarray([[-1, -1], [1, 1]]), (2, 2))  # for image 1 and image 2 in y direction
     Gt1 = np.reshape(np.asarray([[-1, -1], [-1, -1]]), (2, 2))  # for 1st image
@@ -30,7 +37,6 @@ def Lucas_Kanade(I1, I2, features, k = 1):
 
 
     Ix  = (convolve2d(I1, Gx) + convolve2d(I2, Gx)) / 2 #smoothing in x direction
-
     Iy  = (convolve2d(I1, Gy) + convolve2d(I2, Gy)) / 2 #smoothing in y direction
     It1 = convolve2d(I1, Gt1) + convolve2d(I2, Gt2)   #taking difference of two images using gaussian mask of all -1 and all 1
 
@@ -78,10 +84,6 @@ def Lucas_Kanade(I1, I2, features, k = 1):
         newFeature[a]=[np.min([max_y-k*2+1, np.int32(x-u[y,x])]), 
                         np.min([max_x-k*2+1, np.int32(y-v[y,x])])]
 
-        #print([max_x-k*2+1, np.int32(x-u[y,x])])
-
-        #newFeature[a]=[np.int32(x-u[y,x]), np.int32(y-v[y,x])]
-
         if np.int32(x+u[y,x])==x and np.int32(y+v[y,x])==y:    # this means that there is no change(x+dx==x,y+dy==y) so marking it as 0 else
             status[a]=0
         else:
@@ -98,7 +100,6 @@ def predict_cluster(val):
   return kmeans.predict(val)
 
 def rad2rgb(rad, cluster = False):
-    
     if cluster:
       c   = predict_cluster(rad)
       rgb = floatRgb(c, 0, 1)

@@ -23,11 +23,17 @@ if __name__ == '__main__':
   parser.add_argument("-f", "--file", dest="filename",
                       help="Video", metavar="FILE")
 
+  parser.add_argument("-out", "--out", dest="out",
+                      help="Video", metavar="FILE", default='outvideo')
+
   parser.add_argument("-c", "--maxCorners",
                       dest="maxCorners", type=int, default=100)
 
   parser.add_argument("-s", "--sizeWinlk",
                       dest="sizeWinlk", type=int, default=10)
+
+  parser.add_argument("-g", "--groupAngle",
+                      dest="groupAngle", action='store_true')
 
   args = parser.parse_args()
   print(args)
@@ -37,7 +43,7 @@ if __name__ == '__main__':
 
   # Define the codec and create VideoWriter object
   fourcc = cv2.VideoWriter_fourcc('F','M','P','4')
-  out    = cv2.VideoWriter('output.avi', fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
+  out    = cv2.VideoWriter(args.out+".avi", fourcc, 20.0, (int(cap.get(3)), int(cap.get(4))))
 
 
   # Take first frame and find corners in it
@@ -74,8 +80,10 @@ if __name__ == '__main__':
           break
 
       # Resent FeaturesTrack
-      if i_frame % 2 == 0:
+      if i_frame % 5 == 0:
           p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+      
+      #print(len(p0))
 
       # Frame in Grayscale
       frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -107,8 +115,8 @@ if __name__ == '__main__':
           if np.fabs(x) <= t and np.fabs(y) <= t:
               continue
           
-          mask  = cv2.line(mask, (a,b), (c,d), rad2rgb(angle, cluster=True), 2)
-          frame = cv2.circle(frame,(a,b), 3, rad2rgb(angle, cluster=True), -1)
+          mask  = cv2.line(mask, (a,b), (c,d), rad2rgb(angle, cluster=args.groupAngle), 2)
+          frame = cv2.circle(frame,(a,b), 3, rad2rgb(angle, cluster=args.groupAngle), -1)
 
       img = cv2.add(frame, mask)
       
@@ -128,7 +136,7 @@ if __name__ == '__main__':
       i_frame  = i_frame+1
 
   #Save Log flow
-  save_logflow(log_flow)
+  save_logflow(log_flow, args.out+".csv")
 
   out.release()
   cap.release()

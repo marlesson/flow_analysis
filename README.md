@@ -10,8 +10,15 @@
 # Uso
 
 ```
-python parse_lk.py -f data/sample.flv -s 10 -c 300
+python parse_lk.py -f data/sample.flv -s 3 -c 300
 ```
+
+## Métricas
+
+* Fluxo
+* Densidade
+* Velocidade ?
+
 
 ## Optical Flow 
 
@@ -31,3 +38,10 @@ python parse_lk.py -f data/sample.flv -s 10 -c 300
 * https://sandipanweb.wordpress.com/2018/02/25/implementing-lucas-kanade-optical-flow-algorithm-in-python/
 * https://www.youtube.com/watch?v=1r8E9uAcn4E
 * https://www.youtube.com/watch?v=TcnVeK6YjUc
+
+
+## Dataset
+
+* https://www.sites.univ-rennes2.fr/costel/corpetti/agoraset/Site/AGORASET.html
+* http://www.cs.cmu.edu/~saada/Projects/CrowdSegmentation/
+* http://www.cvg.reading.ac.uk/PETS2009/a.html
