@@ -47,9 +47,9 @@ if __name__ == '__main__':
   plt.subplot(121)
   plt.imshow(old_gray, cmap="gray")
   plt.scatter(perspective_samples["original"][:,0],perspective_samples["original"][:,1], marker=".")
-  old_gray       = transform_image(old_gray, remove_perspective_matrix)
+  old_gray2      = transform_image(old_gray, remove_perspective_matrix)
   plt.subplot(122)
-  plt.imshow(old_gray, cmap="gray")
+  plt.imshow(old_gray2, cmap="gray")
   plt.scatter(perspective_samples["flat"][:,0],perspective_samples["flat"][:,1], marker=".")
   plt.show()
   # parameter to get features track
