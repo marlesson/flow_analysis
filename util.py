@@ -23,6 +23,17 @@ def save_logflow(log, file="log_flow.csv"):
       f.write(line+"\n")
 
 
+def allFeaturesToTrack(I, k = 2):
+  w, h = I.shape
+
+  features = []
+  for i in range(k, w-k, k):
+    for j in range(k, h-k, k):
+  
+      features.append([[j, i]])
+
+  return np.array(features)
+
 def Lucas_Kanade(I1, I2, features, k = 1):
     # Gaussian Filter
     #sigma = 5
@@ -62,6 +73,7 @@ def Lucas_Kanade(I1, I2, features, k = 1):
     where U is matrix of 1 by 2 and contains change in x and y direction(x==U[0] and y==U[1])
     we first calculate A matrix which is 2 by 2 matrix of [[fx**2, fx*fy],[ fx*fy fy**2] and now take inverse of it
     and B is -[[fx*ft1],[fy,ft2]]"""
+
     for a, i in enumerate(feature):
         x, y = i
 
@@ -76,7 +88,7 @@ def Lucas_Kanade(I1, I2, features, k = 1):
         B[0, 0] = -np.sum(Ix[y-k:y+1+k, x-k:x+1+k] * It1[y-k:y+1+k, x-k:x+1+k])
         B[1, 0] = -np.sum(Iy[y-k:y+1+k, x-k:x+1+k] * It1[y-k:y+1+k, x-k:x+1+k])
         prod    = np.matmul(Ainv, B)
-        
+
         u[y, x] = prod[0]
         v[y, x] = prod[1]
 
@@ -94,9 +106,19 @@ def Lucas_Kanade(I1, I2, features, k = 1):
     return newFeature, status
 
 
+
+
 kmeans = joblib.load('kmeans.pkl') 
 def predict_cluster(val):
   return kmeans.predict(val)
+
+def rgb(minimum, maximum, value):
+    minimum, maximum = float(minimum), float(maximum)
+    ratio = 2 * (value-minimum) / (maximum - minimum)
+    b = int(max(0, 255*(1 - ratio)))
+    r = int(max(0, 255*(ratio - 1)))
+    g = 255 - b - r
+    return r, g, b
 
 def rad2rgb(rad, cluster = False):
     if cluster:
@@ -107,6 +129,11 @@ def rad2rgb(rad, cluster = False):
 
     return rgb
 
+def rad2rgb(rad, cluster = False):
+    #rgb = floatRgb(rad, -math.pi, math.pi)
+    #rgb(-math.pi, math.pi, rad)
+    return rgb(-math.pi, math.pi, rad)
+    
 def floatRgb(mag, cmin, cmax):
        """
        Return a tuple of floats between 0 and 1 for the red, green and

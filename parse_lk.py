@@ -51,15 +51,16 @@ if __name__ == '__main__':
   plt.figure(1)
   ret, old_frame = cap.read()
   old_gray       = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
-
-  plt.subplot(121)
-  plt.imshow(old_gray, cmap="gray")
-  plt.scatter(perspective_samples["original"][:,0],perspective_samples["original"][:,1], marker=".")
-  old_gray2      = transform_image(old_gray, remove_perspective_matrix)
-  plt.subplot(122)
-  plt.imshow(old_gray2, cmap="gray")
-  plt.scatter(perspective_samples["flat"][:,0],perspective_samples["flat"][:,1], marker=".")
-  plt.show()
+  print(old_gray.shape)
+  # Transform
+  # plt.subplot(121)
+  # plt.imshow(old_gray, cmap="gray")
+  # plt.scatter(perspective_samples["original"][:,0],perspective_samples["original"][:,1], marker=".")
+  # old_gray2      = transform_image(old_gray, remove_perspective_matrix)
+  # plt.subplot(122)
+  # plt.imshow(old_gray2, cmap="gray")
+  # plt.scatter(perspective_samples["flat"][:,0],perspective_samples["flat"][:,1], marker=".")
+  # plt.show()
 
   # parameter to get features track
   feature_params = dict(maxCorners=args.maxCorners,
@@ -73,11 +74,12 @@ if __name__ == '__main__':
                           criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
 
   p0             = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
-  
+  #p0             = allFeaturesToTrack(old_gray)
+
   # Create a mask image for drawing purposes
   mask    = np.zeros_like(old_frame)    
   i_frame = 1
-
+  
   # Log pixels flow
   log_flow = []
 
@@ -90,24 +92,20 @@ if __name__ == '__main__':
 
       # Resent FeaturesTrack
       if i_frame % 5 == 0:
-        p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
-      #print("..")
-      #print(p0)
+       p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+       #p0 = allFeaturesToTrack(old_gray)
+
       if p0 is None:
         p0 = []
-
-      #print(len(p0))
 
       # Frame in Grayscale
       frame_gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
       #frame_gray = transform_image(frame_gray, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-    
 
       # Optical Flow
       #p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
 
       p1, st = Lucas_Kanade(old_gray, frame_gray, p0, args.sizeWinlk)
-      #print(p0, p1, st)
       # Select good points
 
       try:
@@ -125,14 +123,18 @@ if __name__ == '__main__':
           y     = b-d
           angle = math.atan2(y, x)
           size  = math.sqrt(x**2+y**2)
+
+          if size <= 1:
+            continue
           
           log_flow.append([i_frame, i, int(a), int(b), int(c), 
                             int(d), int(x), int(y), angle, size])
+
           #print((c,d), " -> ", (a,b), " ", (x, y), " ", angle, " ", size)
           # continue if diff between pixels positions is less 1
-          t = 1
-          if np.fabs(x) <= t and np.fabs(y) <= t:
-              continue
+          #t = 1
+          #if np.fabs(x) <= t and np.fabs(y) <= t:
+          #    continue
           
           mask  = cv2.line(mask, (a,b), (c,d), rad2rgb(angle, cluster=args.groupAngle), 2)
           frame = cv2.circle(frame,(a,b), 3, rad2rgb(angle, cluster=args.groupAngle), -1)
