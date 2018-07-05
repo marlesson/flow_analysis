@@ -11,9 +11,11 @@ import matplotlib.pyplot as plt
 from util import *
 
 perspective_samples = {
-    "original": [[497, 597], [545, 578], [533, 254], [566, 255]], 
-    "flat": [[500, 600], [540, 600], [500, 255], [540, 255]]
+    "original": np.array([[498, 582], [545, 580], [534, 258], [566, 258]]), 
+    "flat": np.array([[500, 580], [530, 580], [500, 300], [530, 300]])
 }
+
+remove_perspective_matrix = calculate_perspective_transformation(perspective_samples, 0.7, [200,100])
 
 if __name__ == '__main__':
 
@@ -39,11 +41,17 @@ if __name__ == '__main__':
 
 
   # Take first frame and find corners in it
+  plt.figure(1)
   ret, old_frame = cap.read()
   old_gray       = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
-  #old_gray       = transform_image(old_gray, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
-  #plt.imshow(old_gray, cmap="gray")
-  #plt.show()
+  plt.subplot(121)
+  plt.imshow(old_gray, cmap="gray")
+  plt.scatter(perspective_samples["original"][:,0],perspective_samples["original"][:,1], marker=".")
+  old_gray       = transform_image(old_gray, remove_perspective_matrix)
+  plt.subplot(122)
+  plt.imshow(old_gray, cmap="gray")
+  plt.scatter(perspective_samples["flat"][:,0],perspective_samples["flat"][:,1], marker=".")
+  plt.show()
   # parameter to get features track
   feature_params = dict(maxCorners=args.maxCorners,
                         qualityLevel=0.3,
