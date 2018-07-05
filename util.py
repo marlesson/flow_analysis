@@ -122,29 +122,46 @@ def floatRgb(mag, cmin, cmax):
        red  = min((max((4*(x-0.25), 0.)), 1.))*255
        green= min((max((4*math.fabs(x-0.5)-1., 0.)), 1.))*255
        return [int(red), int(green), int(blue)]
-"""
-def calculate_perspective_transformation(samples):
-    x11 == (h00*x11h + h01*y11h + h02)/(h20*x11h + h21*y11h + h22), 
-   y11 == (h10*x11h + h11*y11h + h12)/(h20*x11h + h21*y11h + h22),
-   x12 == (h00*x12h + h01*y12h + h02)/(h20*x12h + h21*y12h + h22), 
-   y12 == (h10*x12h + h11*y12h + h12)/(h20*x12h + h21*y12h + h22),
-   x21 == (h00*x21h + h01*y21h + h02)/(h20*x21h + h21*y21h + h22),
-   y21 == (h10*x21h + h11*y21h + h12)/(h20*x21h + h21*y21h + h22),
-   x22 == (h00*x22h + h01*y22h + h02)/(h20*x22h + h21*y22h + h22), 
-   y22 == (h10*x22h + h11*y22h + h12)/(h20*x22h + h21*y22h + h22)
-"""
+
+def calculate_perspective_transformation(source, target, resize_ratio = 1, translate = [0,0]):
+  x = 1
+  y = 0
+  p  = source
+  p_ = target
+  A  = [
+    [ 0,         0,         0,    -p[0][x],   -p[0][y],   -1,     p_[0][y]*p[0][x],     p_[0][y]*p[0][y] ],
+    [ p[0][x],   p[0][y],   1,     0,          0,          0,    -p_[0][x]*p[0][x],    -p_[0][x]*p[0][y] ],
+    
+    [ 0,         0,         0,    -p[1][x],   -p[1][y],   -1,     p_[1][y]*p[1][x],     p_[1][y]*p[1][y] ],
+    [ p[1][x],   p[1][y],   1,     0,          0,          0,    -p_[1][x]*p[1][x],    -p_[1][x]*p[1][y] ],
+    
+    [ 0,         0,         0,    -p[2][x],   -p[2][y],   -1,     p_[2][y]*p[2][x],     p_[2][y]*p[2][y] ],
+    [ p[2][x],   p[2][y],   1,     0,          0,          0,    -p_[2][x]*p[2][x],    -p_[2][x]*p[2][y] ],
+    
+    [ 0,         0,         0,    -p[3][x],   -p[3][y],   -1,     p_[3][y]*p[3][x],     p_[3][y]*p[3][y] ],
+    [ p[3][x],   p[3][y],   1,     0,          0,          0,    -p_[3][x]*p[3][x],    -p_[3][x]*p[3][y] ]
+  ]
+  B = [
+    -p_[0][y],   p_[0][x],
+    -p_[1][y],   p_[1][x],
+    -p_[2][y],   p_[2][x],
+    -p_[3][y],   p_[3][x]
+  ]
+  prespective = np.append(np.linalg.solve(np.array(A), np.array(B)), 1).reshape(3, 3)
+  resize_translate = [ [ resize_ratio , 0 , translate[0] ] , [ 0 , resize_ratio , translate[1] ] , [ 0 , 0 , 1 ] ]
+  return np.dot(resize_translate, prespective)
+
 
 def transform_image(img, transformation):
-    print(type(img))
-    new_img = np.zeros(img.shape)
-    for i, line in enumerate(img):
-      for j, pixel in enumerate(line):
-        p = [i, j, 1]
-        p_ = np.dot(transformation,p)
-        p_ = p_/p_[2]
-        if p_[0] < len(img) and p_[1] < len(line):
-          new_img[int(p_[0])][int(p_[1])] = pixel
-    print(np.setdiff1d(img.reshape((1,921600)), new_img.reshape((1,921600))))
-    return new_img
-    
-
+  new_img = np.zeros(img.shape)
+  for i, line in enumerate(img):
+    for j, pixel in enumerate(line):
+      p = [i, j, 1]
+      p_ = np.dot(transformation, p)
+      p_ = p_/(p_[2])
+      new_x = int(round(p_[0]))
+      new_y = int(round(p_[1]))
+      if 0 <= new_x < len(img) and 0 <= new_y < len(line):
+        new_img[new_x][new_y] = pixel
+  return new_img
+  
