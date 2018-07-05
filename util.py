@@ -29,7 +29,6 @@ def Lucas_Kanade(I1, I2, features, k = 1):
     #I1 = gaussian_filter(I1, sigma=sigma)
     #I2 = gaussian_filter(I2, sigma=sigma)
 
-
     Gx  = np.reshape(np.asarray([[-1, 1], [-1, 1]]), (2, 2))  # for image 1 and image 2 in x direction
     Gy  = np.reshape(np.asarray([[-1, -1], [1, 1]]), (2, 2))  # for image 1 and image 2 in y direction
     Gt1 = np.reshape(np.asarray([[-1, -1], [-1, -1]]), (2, 2))  # for 1st image

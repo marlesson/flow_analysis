@@ -10,6 +10,8 @@
 # Uso
 
 ```
+python pyramid_video.py -f data/scene01_x1_view1_1.avi -out multscale/scene01_x4_view1 -max_layer 3
+
 python parse_lk.py -f data/sample.flv -s 3 -c 300
 ```
 

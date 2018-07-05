@@ -47,7 +47,7 @@ if __name__ == '__main__':
   # Take first frame and find corners in it
   ret, old_frame = cap.read()
   old_gray       = cv2.cvtColor(old_frame, cv2.COLOR_BGR2GRAY)
-  #old_gray       = transform_image(old_gray, [[1, 0, 0], [0, 1, 0], [0, 0, 1]])
+  #old_gray       = transform_image(old_gray, [[1, 0, 0], [0, 0.5, 0], [0, 0, 1]])
   #plt.imshow(old_gray, cmap="gray")
   #plt.show()
   # parameter to get features track
@@ -55,6 +55,12 @@ if __name__ == '__main__':
                         qualityLevel=0.3,
                         minDistance=7,
                         blockSize=7)   
+
+  # Parameters for lucas kanade optical flow
+  lk_params      = dict( winSize  = (15,15),
+                          maxLevel = 2,
+                          criteria = (cv2.TERM_CRITERIA_EPS | cv2.TERM_CRITERIA_COUNT, 10, 0.03))
+
   p0             = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
   
   # Create a mask image for drawing purposes
@@ -73,8 +79,12 @@ if __name__ == '__main__':
 
       # Resent FeaturesTrack
       if i_frame % 5 == 0:
-          p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
-      
+        p0 = cv2.goodFeaturesToTrack(old_gray, mask = None, **feature_params)
+      #print("..")
+      #print(p0)
+      if p0 is None:
+        p0 = []
+
       #print(len(p0))
 
       # Frame in Grayscale
@@ -83,11 +93,17 @@ if __name__ == '__main__':
     
 
       # Optical Flow
+      #p1, st, err = cv2.calcOpticalFlowPyrLK(old_gray, frame_gray, p0, None, **lk_params)
+
       p1, st = Lucas_Kanade(old_gray, frame_gray, p0, args.sizeWinlk)
-  
+      #print(p0, p1, st)
       # Select good points
-      good_new = p1[st==1]
-      good_old = p0[st==1]
+
+      try:
+        good_new = p1[st==1]
+        good_old = p0[st==1]
+      except:
+        good_new = good_old = np.array([])
 
       # draw the tracks
       for i, (new,old) in enumerate(zip(good_new, good_old)):
