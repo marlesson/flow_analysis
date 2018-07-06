@@ -9,10 +9,21 @@
 
 # Uso
 
+Cria cópias do Video usando a Piramide Gaussiana para análise multiescala
+
 ```
 python pyramid_video.py -f data/scene01_x1_view1_1.avi -out multscale/scene01_x4_view1 -max_layer 3
+```
 
+Processa o vídeo e cria os vetores
+
+```
 python parse_lk.py -f data/sample.flv -s 3 -c 300
+```
+
+Processa os vetores e cria representação por blocos
+```
+python parse_arrows.py -f experimentos/output/scene06_x1.csv -out experimentos/output
 ```
 
 ## Métricas

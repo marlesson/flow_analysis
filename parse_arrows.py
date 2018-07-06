@@ -64,5 +64,7 @@ if __name__ == '__main__':
 
       # Block Partition
       df_pooling = block_partition(df_filter, shape, args.kernel)
-      fig        = plot_arrows(df_pooling, shape)
-      fig.savefig("{}/{}.png".format(filter_directory, frame))
+      if len(df_pooling) > 0:
+        df_pooling.to_csv(directory+'/arrows.csv')
+        fig        = plot_arrows(df_pooling, shape)
+        fig.savefig("{}/{}.png".format(filter_directory, frame))
