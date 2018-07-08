@@ -5,6 +5,7 @@ import matplotlib
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.colors as mpl_colors
 
 def rgb(minimum, maximum, value):
     minimum, maximum = float(minimum), float(maximum)
@@ -22,6 +23,12 @@ def rad2rgb(rad):
     color = rgb(-math.pi, math.pi, rad)
     #colot = [0.9604165758394343, 0.039583424160565706, 0.0]
     return color
+
+def getColors(items):
+    colors_hex = ["#EEEEEE", "#0048BA", "#4C2F27", "#B0BF1A", "#7CB9E8", 
+                  "#E32636", "#FF7E00", "#34B334", "#FF033E", "#915C83"]
+    colors = [colors_hex[i+1] for i in items]
+    return colors
 
 def floatRgb(mag, cmin, cmax):
     """
@@ -79,7 +86,10 @@ def compass(angles, radii, arrowprops=dict(color='darkorange', linewidth=2)):
     return fig, ax
 
    
-def plot_arrows(df, shape):
+def plot_arrows(df, shape, colors=False):
+    if not colors:
+        colors = [rad2rgb(r) for r in df.angle.values]
+
     plt.clf()
     
     #Plt
@@ -93,7 +103,7 @@ def plot_arrows(df, shape):
 
     plt.quiver(df.x1.values, df.y1.values, 
                df.x.values, df.y.values,  
-               angles='xy', scale_units='xy', color=[rad2rgb(r) for r in df.angle.values])
+               angles='xy', scale_units='xy', color=colors)
     return plt
 
 

@@ -26,6 +26,11 @@ Processa os vetores e cria representação por blocos
 python parse_arrows.py -f experimentos/output/scene06_x1.csv -out experimentos/output
 ```
 
+Criar clusters a partir dos vetores de representação por blocos
+```
+python generate_clusters.py -d 0.15 -f experimentos/output/scene07_x4_view1/arrows.csv
+```
+
 ## Métricas
 
 * Fluxo
